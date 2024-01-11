@@ -25,7 +25,7 @@ class OBDInterface:
         self.fuel_button = tk.Button(master, text="Poziom paliwa", command=self.display_fuel_level, bg="orange", fg="white", font=("Helvetica", 16))
         self.fuel_button.pack()
 
-        self.coolant_button = tk.Button(master, text="Temperatura chłodziwa", command=self.display_coolant_temperature, bg="purple", fg="white", font=("Helvetica", 16))
+        self.coolant_button = tk.Button(master, text="Temperatura płynu chłodniczego", command=self.display_coolant_temperature, bg="purple", fg="white", font=("Helvetica", 16))
         self.coolant_button.pack()
 
         self.throttle_button = tk.Button(master, text="Pozycja gazu", command=self.display_throttle_position, bg="brown", fg="white", font=("Helvetica", 16))
@@ -47,7 +47,7 @@ class OBDInterface:
         self.fuel_label = tk.Label(master, text="Poziom paliwa: ", bg="lightgray", font=("Helvetica", 18))
         self.fuel_label.pack()
 
-        self.coolant_label = tk.Label(master, text="Temperatura chłodziwa: ", bg="lightgray", font=("Helvetica", 18))
+        self.coolant_label = tk.Label(master, text="Temperatura płynu chłodniczego: ", bg="lightgray", font=("Helvetica", 18))
         self.coolant_label.pack()
 
         # Variables for calculating fuel consumption
@@ -68,7 +68,7 @@ class OBDInterface:
         self.rpm_label.config(text=f"Obroty silnika: {rpm} RPM")
         self.throttle_label.config(text=f"Pozycja gazu: {throttle_position}%")
         self.fuel_label.config(text=f"Poziom paliwa: {fuel_level}%")
-        self.coolant_label.config(text=f"Temperatura chłodziwa: {coolant_temp} °C")
+        self.coolant_label.config(text=f"Temperatura płynu chłodniczego: {coolant_temp} °C")
 
         # Check if we have a previous fuel level reading to calculate consumption
         if self.last_fuel_level is not None:
@@ -111,7 +111,7 @@ class OBDInterface:
 
     def display_coolant_temperature(self):
         coolant_temp = self.connection.query(commands.COOLANT_TEMP).value
-        self.show_popup("Temperatura chłodziwa", f"Temperatura chłodziwa: {coolant_temp} °C")
+        self.show_popup("Temperatura płynu chłodniczego", f"Temperatura płynu chłodniczego: {coolant_temp} °C")
 
     def display_throttle_position(self):
         throttle_position = self.connection.query(commands.THROTTLE_POS).value
