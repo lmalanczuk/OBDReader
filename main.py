@@ -84,8 +84,12 @@ class OBDInterface:
     def display_errors(self):
         try:
             errors = self.connection.query(commands.GET_DTC)
-            error_message = "Błędy DTC:\n" + "\n".join(str(error.value) for error in errors)
-            self.show_popup("Błędy DTC", error_message)
+            if len(errors) == 0:
+                error_message = "Brak błędów DTC."
+                self.show_popup("Błędy DTC", error_message)
+            else:
+                error_message = "Błędy DTC:\n" + "\n".join(str(error.value) for error in errors)
+                self.show_popup("Błędy DTC", error_message)
         except Exception as e:
             print(f"Error retrieving DTC: {e}")
 
