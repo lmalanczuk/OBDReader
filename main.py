@@ -7,12 +7,14 @@ class OBDInterface:
         master.title("OBD-II Interface")
         self.port = "COM3"
 
+        # Inicjalizacja połączenia OBD
         self.connection = OBD(self.port)
 
-        # GUI elements
+        # Utworzenie etykiety nagłówkowej
         self.label = tk.Label(master, text="OBD-II Interface", bg="blue", fg="white", font=("Helvetica", 24, "bold"))
         self.label.pack()
 
+        # Przyciski do obsługi różnych funkcji OBD
         self.error_button = tk.Button(master, text="Błędy DTC", command=self.display_errors, bg="red", fg="white", font=("Helvetica", 16))
         self.error_button.pack()
 
@@ -25,7 +27,7 @@ class OBDInterface:
         self.fuel_button = tk.Button(master, text="Poziom paliwa", command=self.display_fuel_level, bg="orange", fg="white", font=("Helvetica", 16))
         self.fuel_button.pack()
 
-        self.coolant_button = tk.Button(master, text="Temperatura płynu chłodczniego", command=self.display_coolant_temperature, bg="purple", fg="white", font=("Helvetica", 16))
+        self.coolant_button = tk.Button(master, text="Temperatura płynu chłodniczego", command=self.display_coolant_temperature, bg="purple", fg="white", font=("Helvetica", 16))
         self.coolant_button.pack()
 
         self.throttle_button = tk.Button(master, text="Pozycja gazu", command=self.display_throttle_position, bg="brown", fg="white", font=("Helvetica", 16))
@@ -34,7 +36,7 @@ class OBDInterface:
         self.calculate_consumption_button = tk.Button(master, text="Oblicz spalone paliwo", command=self.calculate_fuel_consumption, bg="blue", fg="white", font=("Helvetica", 16))
         self.calculate_consumption_button.pack()
 
-        # Real-time data labels
+        # Etykiety dla danych w czasie rzeczywistym
         self.speed_label = tk.Label(master, text="Prędkość: ", bg="lightgray", font=("Helvetica", 18))
         self.speed_label.pack()
 
@@ -50,14 +52,15 @@ class OBDInterface:
         self.coolant_label = tk.Label(master, text="Temperatura płynu chłodniczego: ", bg="lightgray", font=("Helvetica", 18))
         self.coolant_label.pack()
 
-        # Variables for calculating fuel consumption
+        # Zmienne do obliczeń zużycia paliwa
         self.last_fuel_level = None
         self.total_fuel_consumed = 0.0
 
-        # Update real-time data periodically
+        # Aktualizacja danych w czasie rzeczywistym
         self.update_real_time_data()
 
     def update_real_time_data(self):
+        # Pobranie danych z OBD i aktualizacja etykiet
         speed = self.connection.query(commands.SPEED).value
         rpm = self.connection.query(commands.RPM).value
         throttle_position = self.connection.query(commands.THROTTLE_POS).value
@@ -70,28 +73,16 @@ class OBDInterface:
         self.fuel_label.config(text=f"Poziom paliwa: {fuel_level}%")
         self.coolant_label.config(text=f"Temperatura płynu chłodniczego: {oil_temp} °C")
 
-        # Check if we have a previous fuel level reading to calculate consumption
+        # Sprawdzenie, czy mamy poprzedni odczyt poziomu paliwa do obliczeń
         if self.last_fuel_level is not None:
             fuel_consumed = self.last_fuel_level - fuel_level
             self.total_fuel_consumed += fuel_consumed
 
-        # Update last fuel level for the next calculation
+        # Aktualizacja ostatniego odczytu poziomu paliwa do następnego obliczenia
         self.last_fuel_level = fuel_level
 
-        # Schedule the next update after 1000 milliseconds (1 second)
+        # Zaplanowanie kolejnej aktualizacji po 1000 milisekundach (1 sekunda)
         self.master.after(1000, self.update_real_time_data)
-
-    # def display_errors(self):
-    #     try:
-    #         errors = self.connection.query(commands.GET_DTC)
-    #         if len(errors) == 0:
-    #             error_message = "Brak błędów DTC."
-    #             self.show_popup("Błędy DTC", error_message)
-    #         else:
-    #             error_message = "Błędy DTC:\n" + "\n".join(str(error.value) for error in errors)
-    #             self.show_popup("Błędy DTC", error_message)
-    #     except Exception as e:
-    #         print(f"Error retrieving DTC: {e}")
 
     def display_errors(self):
         try:
@@ -103,6 +94,7 @@ class OBDInterface:
 
             self.show_popup("Błędy DTC", error_message)
         except Exception as e:
+            # Obsługa błędu podczas pobierania błędów DTC
             error_message2 = f"Błąd podczas pobierania błędów DTC: {e}"
             self.show_popup("Błąd", error_message2)
 
@@ -111,10 +103,12 @@ class OBDInterface:
             self.connection.query(commands.CLEAR_DTC)
             self.show_popup("Usuwanie błędów DTC", "Błędy DTC zostały usunięte.")
         except Exception as e:
-            print(f"Error clearing DTC: {e}")
+            # Obsługa błędu podczas usuwania błędów DTC
+            print(f"Błąd podczas usuwania błędów DTC: {e}")
             self.show_popup("Usuwanie błędów DTC", f"Błąd podczas usuwania błędów DTC: {e}")
 
     def display_data(self):
+        # Pobranie danych OBD i wyświetlenie ich w oknie popup
         speed = self.connection.query(commands.SPEED).value
         rpm = self.connection.query(commands.RPM).value
         throttle_position = self.connection.query(commands.THROTTLE_POS).value
@@ -123,14 +117,17 @@ class OBDInterface:
         self.show_popup("Dane OBD-II", data_message)
 
     def display_fuel_level(self):
+        # Wyświetlenie poziomu paliwa w oknie popup
         fuel_level = self.connection.query(commands.FUEL_LEVEL).value
         self.show_popup("Poziom paliwa", f"Poziom paliwa: {fuel_level}%")
 
     def display_coolant_temperature(self):
+        # Wyświetlenie temperatury płynu chłodniczego w oknie popup
         oil_temp = self.connection.query(commands.COOLANT_TEMP).value
         self.show_popup("Temperatura płynu chłodniczego", f"Temperatura płynu chłodniczego: {oil_temp} °C")
 
     def display_throttle_position(self):
+        # Wyświetlenie pozycji gazu w oknie popup
         throttle_position = self.connection.query(commands.THROTTLE_POS).value
         self.show_popup("Pozycja gazu", f"Pozycja gazu: {throttle_position}%")
 
@@ -141,6 +138,7 @@ class OBDInterface:
             self.show_popup("Spalone paliwo", f"Spalone paliwo: {self.total_fuel_consumed:.2f} litrów")
 
     def show_popup(self, title, message):
+        # Wyświetlenie okna popup z odpowiednim tytułem i wiadomością
         popup = tk.Toplevel(self.master)
         popup.title(title)
         popup.geometry("400x250")
@@ -152,7 +150,8 @@ class OBDInterface:
         ok_button.pack()
 
 if __name__ == "__main__":
+    # Uruchomienie głównego okna programu
     root = tk.Tk()
     obd_interface = OBDInterface(root)
-    root.geometry("800x600")  # Set the initial window size
+    root.geometry("800x600")  # Ustawienie początkowego rozmiaru okna
     root.mainloop()
