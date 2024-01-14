@@ -81,17 +81,30 @@ class OBDInterface:
         # Schedule the next update after 1000 milliseconds (1 second)
         self.master.after(1000, self.update_real_time_data)
 
+    # def display_errors(self):
+    #     try:
+    #         errors = self.connection.query(commands.GET_DTC)
+    #         if len(errors) == 0:
+    #             error_message = "Brak błędów DTC."
+    #             self.show_popup("Błędy DTC", error_message)
+    #         else:
+    #             error_message = "Błędy DTC:\n" + "\n".join(str(error.value) for error in errors)
+    #             self.show_popup("Błędy DTC", error_message)
+    #     except Exception as e:
+    #         print(f"Error retrieving DTC: {e}")
+
     def display_errors(self):
         try:
             errors = self.connection.query(commands.GET_DTC)
             if len(errors) == 0:
                 error_message = "Brak błędów DTC."
-                self.show_popup("Błędy DTC", error_message)
             else:
                 error_message = "Błędy DTC:\n" + "\n".join(str(error.value) for error in errors)
-                self.show_popup("Błędy DTC", error_message)
+
+            self.show_popup("Błędy DTC", error_message)
         except Exception as e:
-            print(f"Error retrieving DTC: {e}")
+            error_message2 = f"Błąd podczas pobierania błędów DTC: {e}"
+            self.show_popup("Błąd", error_message2)
 
     def clear_errors(self):
         try:
