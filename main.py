@@ -25,7 +25,7 @@ class OBDInterface:
         self.fuel_button = tk.Button(master, text="Poziom paliwa", command=self.display_fuel_level, bg="orange", fg="white", font=("Helvetica", 16))
         self.fuel_button.pack()
 
-        self.coolant_button = tk.Button(master, text="Temperatura oleju", command=self.display_coolant_temperature, bg="purple", fg="white", font=("Helvetica", 16))
+        self.coolant_button = tk.Button(master, text="Temperatura płynu chłodczniego", command=self.display_coolant_temperature, bg="purple", fg="white", font=("Helvetica", 16))
         self.coolant_button.pack()
 
         self.throttle_button = tk.Button(master, text="Pozycja gazu", command=self.display_throttle_position, bg="brown", fg="white", font=("Helvetica", 16))
@@ -47,7 +47,7 @@ class OBDInterface:
         self.fuel_label = tk.Label(master, text="Poziom paliwa: ", bg="lightgray", font=("Helvetica", 18))
         self.fuel_label.pack()
 
-        self.coolant_label = tk.Label(master, text="Temperatura oleju: ", bg="lightgray", font=("Helvetica", 18))
+        self.coolant_label = tk.Label(master, text="Temperatura płynu chłodniczego: ", bg="lightgray", font=("Helvetica", 18))
         self.coolant_label.pack()
 
         # Variables for calculating fuel consumption
@@ -62,13 +62,13 @@ class OBDInterface:
         rpm = self.connection.query(commands.RPM).value
         throttle_position = self.connection.query(commands.THROTTLE_POS).value
         fuel_level = self.connection.query(commands.FUEL_LEVEL).value
-        oil_temp = self.connection.query(commands.OIL_TEMP).value
+        oil_temp = self.connection.query(commands.COOLANT_TEMP).value
 
         self.speed_label.config(text=f"Prędkość: {speed} km/h")
         self.rpm_label.config(text=f"Obroty silnika: {rpm} RPM")
         self.throttle_label.config(text=f"Pozycja gazu: {throttle_position}%")
         self.fuel_label.config(text=f"Poziom paliwa: {fuel_level}%")
-        self.coolant_label.config(text=f"Temperatura oleju: {oil_temp} °C")
+        self.coolant_label.config(text=f"Temperatura płynu chłodniczego: {oil_temp} °C")
 
         # Check if we have a previous fuel level reading to calculate consumption
         if self.last_fuel_level is not None:
@@ -127,8 +127,8 @@ class OBDInterface:
         self.show_popup("Poziom paliwa", f"Poziom paliwa: {fuel_level}%")
 
     def display_coolant_temperature(self):
-        oil_temp = self.connection.query(commands.OIL_TEMP).value
-        self.show_popup("Temperatura oleju", f"Temperatura oleju: {oil_temp} °C")
+        oil_temp = self.connection.query(commands.COOLANT_TEMP).value
+        self.show_popup("Temperatura płynu chłodniczego", f"Temperatura płynu chłodniczego: {oil_temp} °C")
 
     def display_throttle_position(self):
         throttle_position = self.connection.query(commands.THROTTLE_POS).value
